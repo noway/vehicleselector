@@ -44,23 +44,38 @@ const GET_YEARS = gql`
   }
 `;
 
+function Select({ label, placeholder, disabled, items, setValue, value }) {
+  return (
+    <>
+      <span>{label}: </span>
+      <select onChange={e => setValue(e.target.value)} value={value ?? ""} disabled={disabled}>
+        <option value="">{placeholder}</option>
+        {items.map(({ id, name }) => (
+          <option value={id} key={id}>{name ?? id}</option>
+        ))}
+      </select>
+    </>
+  )
+}
+Select.defaultProps = {
+  items: []
+}
+
 function Make({ makeId, setMakeId }) {
   const { loading, error, data } = useQuery(GET_MAKES);
 
-  if (loading) return <span>Loading...</span>;
-  if (error) return <span>Error :(</span>;
+  if (loading) return <Select label="Make" placeholder="Loading..." disabled={true}/>
+  if (error) return <Select label="Make" placeholder="Error :(" disabled={true}/>
 
   return (
     <>
-      Make:
-      <select onChange={e => setMakeId(e.target.value)} value={makeId}>
-        <option>Please select</option>
-        {
-          data.uvdb.vehicle_selector.uvdb_makes.items.map(({ id, name }) => (
-            <option value={id}>{name}</option>
-          ))
-        }
-      </select>
+      <Select
+        label="Make"
+        placeholder="Please select"
+        items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
+        setValue={setMakeId}
+        value={makeId}
+      />
     </>
   )
 }
@@ -70,20 +85,18 @@ function Model({ modelId, setModelId, makeId }) {
     variables: { make_id: parseInt(makeId, 10) },
   });
 
-  if (loading) return <span>Loading...</span>;
-  if (error) return <span>Error :(</span>;
+  if (loading) return <Select label="Model" placeholder="Loading..." disabled={true}/>
+  if (error) return <Select label="Model" placeholder="Error :(" disabled={true}/>
 
   return (
     <>
-      Model:
-      <select onChange={e => setModelId(e.target.value)} value={modelId}>
-        <option>Please select</option>
-        {
-          data.uvdb.vehicle_selector.uvdb_models.items.map(({ id, name }) => (
-            <option value={id}>{name}</option>
-          ))
-        }
-      </select>
+      <Select
+        label="Model"
+        placeholder="Please select"
+        items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
+        setValue={setModelId}
+        value={modelId}
+      />
     </>
   )
 }
@@ -96,29 +109,27 @@ function Year({ yearId, setYearId, makeId, modelId }) {
     }
   });
 
-  if (loading) return <span>Loading...</span>;
-  if (error) return <span>Error :(</span>;
+  if (loading) return <Select label="Year" placeholder="Loading..." disabled={true}/>
+  if (error) return <Select label="Year" placeholder="Error :(" disabled={true}/>
 
   return (
     <>
-      Year:
-      <select onChange={e => setYearId(e.target.value)} value={yearId}>
-        <option>Please select</option>
-        {
-          data.uvdb.vehicle_selector.uvdb_years.items.map(({ id, name }) => (
-            <option value={id}>{id}</option>
-          ))
-        }
-      </select>
+      <Select
+        label="Year"
+        placeholder="Please select"
+        items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
+        setValue={setYearId}
+        value={yearId}
+      />
     </>
   )
 }
 
 
 function App() {
-  const [makeId, setMakeId] = useState()
-  const [modelId, setModelId] = useState()
-  const [yearId, setYearId] = useState()
+  const [makeId, setMakeId] = useState(null)
+  const [modelId, setModelId] = useState(null)
+  const [yearId, setYearId] = useState(null)
 
   return (
     <div className="App">
@@ -126,17 +137,21 @@ function App() {
         makeId={makeId}
         setMakeId={setMakeId}
       />
-      <Model
-        modelId={modelId}
-        setModelId={setModelId}
-        makeId={makeId}
-      />
-      <Year
-        yearId={yearId}
-        setYearId={setYearId}
-        makeId={makeId}
-        modelId={modelId}
-      />
+      {makeId ?
+        <Model
+          modelId={modelId}
+          setModelId={setModelId}
+          makeId={makeId}
+        /> 
+        : <Select label="Model" placeholder="..." disabled={true}/>}
+      {makeId && modelId ?
+        <Year
+          yearId={yearId}
+          setYearId={setYearId}
+          makeId={makeId}
+          modelId={modelId}
+        />
+        : <Select label="Year" placeholder="..." disabled={true}/>}
     </div>
   );
 }
