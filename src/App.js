@@ -138,14 +138,14 @@ function App() {
         makeId={makeId}
         setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null)}}
       />
-      {makeId ?
+      {makeId !== null ?
         <Model
           modelId={modelId}
           setModelId={(val) => {setModelId(val); setYearId(null)}}
           makeId={makeId}
         /> 
         : <Stub label="Model" message="..." />}
-      {makeId && modelId ?
+      {makeId !== null && modelId !== null ?
         <Year
           yearId={yearId}
           setYearId={setYearId}
