@@ -57,15 +57,16 @@ function Select({ label, placeholder, disabled, items, setValue, value }) {
     </>
   )
 }
-Select.defaultProps = {
-  items: []
+
+function Stub({ label, message }) {
+  return <Select label={label} placeholder={message} disabled={true} items={[]} />
 }
 
 function Make({ makeId, setMakeId }) {
   const { loading, error, data } = useQuery(GET_MAKES);
 
-  if (loading) return <Select label="Make" placeholder="Loading..." disabled={true}/>
-  if (error) return <Select label="Make" placeholder="Error :(" disabled={true}/>
+  if (loading) return <Stub label="Make" message="Loading..." />
+  if (error) return <Stub label="Make" message="Error :(" />
 
   return (
     <>
@@ -85,8 +86,8 @@ function Model({ modelId, setModelId, makeId }) {
     variables: { make_id: parseInt(makeId, 10) },
   });
 
-  if (loading) return <Select label="Model" placeholder="Loading..." disabled={true}/>
-  if (error) return <Select label="Model" placeholder="Error :(" disabled={true}/>
+  if (loading) return <Stub label="Model" message="Loading..." />
+  if (error) return <Stub label="Model" message="Error :(" />
 
   return (
     <>
@@ -109,8 +110,8 @@ function Year({ yearId, setYearId, makeId, modelId }) {
     }
   });
 
-  if (loading) return <Select label="Year" placeholder="Loading..." disabled={true}/>
-  if (error) return <Select label="Year" placeholder="Error :(" disabled={true}/>
+  if (loading) return <Stub label="Year" message="Loading..." />
+  if (error) return <Stub label="Year" message="Error :(" />
 
   return (
     <>
@@ -143,7 +144,7 @@ function App() {
           setModelId={setModelId}
           makeId={makeId}
         /> 
-        : <Select label="Model" placeholder="..." disabled={true}/>}
+        : <Stub label="Model" message="..." />}
       {makeId && modelId ?
         <Year
           yearId={yearId}
@@ -151,7 +152,7 @@ function App() {
           makeId={makeId}
           modelId={modelId}
         />
-        : <Select label="Year" placeholder="..." disabled={true}/>}
+        : <Stub label="Year" message="..." />}
     </div>
   );
 }
