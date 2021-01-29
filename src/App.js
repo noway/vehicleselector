@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import { ApolloClient, InMemoryCache, gql, useQuery } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import { useState } from 'react'
 
 const GET_MAKES = gql`
@@ -21,7 +20,7 @@ const GET_MODELS = gql`
   query Model($make_id: Int!) {
     uvdb {
       vehicle_selector {
-        uvdb_models(uvdb_make_id:$make_id, limit:500) {
+        uvdb_models(uvdb_make_id: $make_id, limit:500) {
           items {
             id
             name
@@ -31,13 +30,11 @@ const GET_MODELS = gql`
     }
   }
 `;
-
-
 const GET_YEARS = gql`
   query Year($make_id: Int!, $model_id: Int!) {
     uvdb {
       vehicle_selector {
-        uvdb_years(uvdb_make_id:$make_id, uvdb_model_id:$model_id, limit:500) {
+        uvdb_years(uvdb_make_id: $make_id, uvdb_model_id: $model_id, limit:500) {
           items {
             id
           }
@@ -47,18 +44,16 @@ const GET_YEARS = gql`
   }
 `;
 
-
-
-function Make({ make, setMake }) {
+function Make({ makeId, setMakeId }) {
   const { loading, error, data } = useQuery(GET_MAKES);
+
   if (loading) return <span>Loading...</span>;
   if (error) return <span>Error :(</span>;
-
 
   return (
     <>
       Make:
-      <select onChange={e => setMake(e.target.value)} value={make}>
+      <select onChange={e => setMakeId(e.target.value)} value={makeId}>
         <option>Please select</option>
         {
           data.uvdb.vehicle_selector.uvdb_makes.items.map(({ id, name }) => (
@@ -70,18 +65,18 @@ function Make({ make, setMake }) {
   )
 }
 
-function Model({ model, setModel, make }) {
+function Model({ modelId, setModelId, makeId }) {
   const { loading, error, data } = useQuery(GET_MODELS, {
-    variables: { make_id: parseInt(make, 10) },
+    variables: { make_id: parseInt(makeId, 10) },
   });
+
   if (loading) return <span>Loading...</span>;
   if (error) return <span>Error :(</span>;
-
 
   return (
     <>
       Model:
-      <select onChange={e => setModel(e.target.value)} value={model}>
+      <select onChange={e => setModelId(e.target.value)} value={modelId}>
         <option>Please select</option>
         {
           data.uvdb.vehicle_selector.uvdb_models.items.map(({ id, name }) => (
@@ -93,21 +88,21 @@ function Model({ model, setModel, make }) {
   )
 }
 
-function Year({ year, setYear, make, model }) {
+function Year({ yearId, setYearId, makeId, modelId }) {
   const { loading, error, data } = useQuery(GET_YEARS, {
     variables: {
-      make_id: parseInt(make, 10),
-      model_id: parseInt(model, 10),
+      make_id: parseInt(makeId, 10),
+      model_id: parseInt(modelId, 10),
     }
   });
+
   if (loading) return <span>Loading...</span>;
   if (error) return <span>Error :(</span>;
-
 
   return (
     <>
       Year:
-      <select onChange={e => setYear(e.target.value)} value={year}>
+      <select onChange={e => setYearId(e.target.value)} value={yearId}>
         <option>Please select</option>
         {
           data.uvdb.vehicle_selector.uvdb_years.items.map(({ id, name }) => (
@@ -121,26 +116,26 @@ function Year({ year, setYear, make, model }) {
 
 
 function App() {
-  const [make, setMake] = useState() // TODO: rename to makeId
-  const [model, setModel] = useState()
-  const [year, setYear] = useState()
+  const [makeId, setMakeId] = useState()
+  const [modelId, setModelId] = useState()
+  const [yearId, setYearId] = useState()
 
   return (
     <div className="App">
       <Make
-        make={make}
-        setMake={setMake}
+        makeId={makeId}
+        setMakeId={setMakeId}
       />
       <Model
-        model={model}
-        setModel={setModel}
-        make={make}
+        modelId={modelId}
+        setModelId={setModelId}
+        makeId={makeId}
       />
       <Year
-        year={year}
-        setYear={setYear}
-        make={make}
-        model={model}
+        yearId={yearId}
+        setYearId={setYearId}
+        makeId={makeId}
+        modelId={modelId}
       />
     </div>
   );
