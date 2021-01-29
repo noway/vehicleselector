@@ -5,3 +5,7 @@
 select {
   width: 180px;
 }
+
+span {
+  margin-left: 5px;
+}
