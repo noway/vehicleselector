@@ -2,7 +2,7 @@ import './App.css';
 import { gql, useQuery } from '@apollo/client';
 import { useState } from 'react'
 
-const GET_MAKES = gql`
+const GET_ALL_MAKES = gql`
   {
     uvdb {
       vehicle_selector {
@@ -16,7 +16,7 @@ const GET_MAKES = gql`
     }
   }
 `;
-const GET_MODELS = gql`
+const GET_MODELS_BY_MAKE = gql`
   query Model($make_id: Int!) {
     uvdb {
       vehicle_selector {
@@ -30,7 +30,7 @@ const GET_MODELS = gql`
     }
   }
 `;
-const GET_YEARS = gql`
+const GET_YEARS_BY_MAKE_MODEL = gql`
   query Year($make_id: Int!, $model_id: Int!) {
     uvdb {
       vehicle_selector {
@@ -63,7 +63,7 @@ function Stub({ label, message }) {
 }
 
 function Make({ makeId, setMakeId }) {
-  const { loading, error, data } = useQuery(GET_MAKES);
+  const { loading, error, data } = useQuery(GET_ALL_MAKES);
 
   if (loading) return <Stub label="Make" message="Loading..." />
   if (error) return <Stub label="Make" message="Error :(" />
@@ -82,7 +82,7 @@ function Make({ makeId, setMakeId }) {
 }
 
 function Model({ modelId, setModelId, makeId }) {
-  const { loading, error, data } = useQuery(GET_MODELS, {
+  const { loading, error, data } = useQuery(GET_MODELS_BY_MAKE, {
     variables: { make_id: parseInt(makeId, 10) },
   });
 
@@ -103,7 +103,7 @@ function Model({ modelId, setModelId, makeId }) {
 }
 
 function Year({ yearId, setYearId, makeId, modelId }) {
-  const { loading, error, data } = useQuery(GET_YEARS, {
+  const { loading, error, data } = useQuery(GET_YEARS_BY_MAKE_MODEL, {
     variables: {
       make_id: parseInt(makeId, 10),
       model_id: parseInt(modelId, 10),
