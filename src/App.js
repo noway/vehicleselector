@@ -136,12 +136,12 @@ function App() {
     <div className="App">
       <Make
         makeId={makeId}
-        setMakeId={setMakeId}
+        setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null)}}
       />
       {makeId ?
         <Model
           modelId={modelId}
-          setModelId={setModelId}
+          setModelId={(val) => {setModelId(val); setYearId(null)}}
           makeId={makeId}
         /> 
         : <Stub label="Model" message="..." />}
