@@ -116,15 +116,13 @@ function Make({ makeId, setMakeId }) {
   if (error) return <Stub label="Make" message="Error :(" />
 
   return (
-    <>
-      <Select
-        label="Make"
-        placeholder="Please select"
-        items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
-        setValue={setMakeId}
-        value={makeId}
-      />
-    </>
+    <Select
+      label="Make"
+      placeholder="Please select"
+      items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
+      setValue={setMakeId}
+      value={makeId}
+    />
   )
 }
 
@@ -141,15 +139,13 @@ function ModelByMake({ modelId, setModelId, makeId }) {
   if (error) return <Stub label="Model" message="Error :(" />
 
   return (
-    <>
-      <Select
-        label="Model"
-        placeholder="Please select"
-        items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
-        setValue={setModelId}
-        value={modelId}
-      />
-    </>
+    <Select
+      label="Model"
+      placeholder="Please select"
+      items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
+      setValue={setModelId}
+      value={modelId}
+    />
   )
 }
 
@@ -167,15 +163,13 @@ function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
   if (error) return <Stub label="Year" message="Error :(" />
 
   return (
-    <>
-      <Select
-        label="Year"
-        placeholder="Please select"
-        items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
-        setValue={setYearId}
-        value={yearId}
-      />
-    </>
+    <Select
+      label="Year"
+      placeholder="Please select"
+      items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
+      setValue={setYearId}
+      value={yearId}
+    />
   )
 }
 
@@ -186,15 +180,13 @@ function Year({ yearId, setYearId, makeId, modelId }) {
   if (error) return <Stub label="Year" message="Error :(" />
 
   return (
-    <>
-      <Select
-        label="Year"
-        placeholder="Please select"
-        items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
-        setValue={setYearId}
-        value={yearId}
-      />
-    </>
+    <Select
+      label="Year"
+      placeholder="Please select"
+      items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
+      setValue={setYearId}
+      value={yearId}
+    />
   )
 }
 
@@ -211,15 +203,13 @@ function MakeByYear({ makeId, setMakeId, yearId }) {
   if (error) return <Stub label="Make" message="Error :(" />
 
   return (
-    <>
-      <Select
-        label="Make"
-        placeholder="Please select"
-        items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
-        setValue={setMakeId}
-        value={makeId}
-      />
-    </>
+    <Select
+      label="Make"
+      placeholder="Please select"
+      items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
+      setValue={setMakeId}
+      value={makeId}
+    />
   )
 }
 
@@ -237,15 +227,13 @@ function ModelByYearMake({ modelId, setModelId, yearId, makeId }) {
   if (error) return <Stub label="Model" message="Error :(" />
 
   return (
-    <>
-      <Select
-        label="Model"
-        placeholder="Please select"
-        items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
-        setValue={setModelId}
-        value={modelId}
-      />
-    </>
+    <Select
+      label="Model"
+      placeholder="Please select"
+      items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
+      setValue={setModelId}
+      value={modelId}
+    />
   )
 }
 
