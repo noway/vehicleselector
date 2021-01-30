@@ -128,7 +128,7 @@ function Make({ makeId, setMakeId }) {
   )
 }
 
-function Model({ modelId, setModelId, makeId }) {
+function ModelByMake({ modelId, setModelId, makeId }) {
   const { loading, error, data } = useQuery(GET_MODELS_BY_MAKE, {
     skip: makeId === null,
     variables: {
@@ -153,7 +153,7 @@ function Model({ modelId, setModelId, makeId }) {
   )
 }
 
-function Year({ yearId, setYearId, makeId, modelId }) {
+function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
   const { loading, error, data } = useQuery(GET_YEARS_BY_MAKE_MODEL, {
     skip: makeId === null || modelId === null,
     variables: {
@@ -179,7 +179,7 @@ function Year({ yearId, setYearId, makeId, modelId }) {
   )
 }
 
-function Year2({ yearId, setYearId, makeId, modelId }) {
+function Year({ yearId, setYearId, makeId, modelId }) {
   const { loading, error, data } = useQuery(GET_ALL_YEARS);
 
   if (loading) return <Stub label="Year" message="Loading..." />
@@ -198,7 +198,7 @@ function Year2({ yearId, setYearId, makeId, modelId }) {
   )
 }
 
-function Make2({ makeId, setMakeId, yearId }) {
+function MakeByYear({ makeId, setMakeId, yearId }) {
   const { loading, error, data } = useQuery(GET_MAKES_BY_YEAR, {
     skip: yearId === null,
     variables: {
@@ -223,7 +223,7 @@ function Make2({ makeId, setMakeId, yearId }) {
   )
 }
 
-function Model2({ modelId, setModelId, yearId, makeId }) {
+function ModelByYearMake({ modelId, setModelId, yearId, makeId }) {
   const { loading, error, data } = useQuery(GET_MODELS_BY_YEAR_MAKE, {
     skip: yearId === null || makeId === null,
     variables: {
@@ -271,12 +271,12 @@ function App() {
             makeId={makeId}
             setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null)}}
           />
-          <Model
+          <ModelByMake
             modelId={modelId}
             setModelId={(val) => {setModelId(val); setYearId(null)}}
             makeId={makeId}
           /> 
-          <Year
+          <YearByMakeModel
             yearId={yearId}
             setYearId={(val) => {setYearId(val)}}
             makeId={makeId}
@@ -284,16 +284,16 @@ function App() {
           />
         </> :
         <>
-          <Year2
+          <Year
             yearId={yearId}
             setYearId={(val) => {setYearId(val); setMakeId(null); setModelId(null)}}
           />
-          <Make2
+          <MakeByYear
             makeId={makeId}
             setMakeId={(val) => {setMakeId(val); setModelId(null)}}
             yearId={yearId}
           /> 
-          <Model2
+          <ModelByYearMake
             modelId={modelId}
             setModelId={(val) => {setModelId(val)}}
             yearId={yearId}
