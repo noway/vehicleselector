@@ -1,6 +1,6 @@
 import './App.css';
 import { gql, useQuery } from '@apollo/client';
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { find, uniqBy } from 'lodash'
 import { Select, TYPE, SIZE } from "baseui/select";
 import { Heading, HeadingLevel } from 'baseui/heading';
@@ -94,13 +94,12 @@ const GET_MODELS_BY_YEAR_MAKE = gql`
 `;
 
 function VSSelect({ controlRef, placeholder, disabled, items, setValue, value, loading }) {
-  const uniqItems = uniqBy(items, 'id')
-  const selectValue = find(uniqItems, { id: value })
+  const selectValue = find(items, { id: value })
   return (
     <Select
       controlRef={controlRef}
       size={SIZE.mini}
-      options={uniqItems.map(({name, id}) => ({ label: name ?? id, id: id }))}
+      options={items.map(({name, id}) => ({ label: name ?? id, id: id }))}
       value={selectValue ? [selectValue] : []}
       placeholder={placeholder}
       maxDropdownHeight="300px"
@@ -130,6 +129,7 @@ function Stub({ placeholder }) {
 
 function Make({ controlRef, makeId, setMakeId }) {
   const { loading, error, data } = useQuery(GET_MAKES);
+  const items = uniqBy(data?.uvdb?.vehicle_selector?.uvdb_makes?.items, 'id')
 
   if (error) return <Stub placeholder="Error :(" />
 
@@ -138,7 +138,7 @@ function Make({ controlRef, makeId, setMakeId }) {
       controlRef={controlRef}
       placeholder="Make"
       loading={loading}
-      items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
+      items={items}
       setValue={setMakeId}
       value={makeId}
     />
@@ -153,6 +153,12 @@ function ModelByMake({ controlRef, modelId, setModelId, makeId }) {
       make_id: parseInt(makeId, 10),
     },
   });
+  const items = uniqBy(data?.uvdb?.vehicle_selector?.uvdb_models?.items, 'id')
+  useEffect(() => {
+    if (items.length === 1 && modelId === null) {
+      setModelId(items[0].id)
+    }
+  }, [items, modelId, setModelId])
 
   if (skip) return <Stub placeholder="Model" />
   if (error) return <Stub placeholder="Error :(" />
@@ -162,7 +168,7 @@ function ModelByMake({ controlRef, modelId, setModelId, makeId }) {
       controlRef={controlRef}
       placeholder="Model"
       loading={loading}
-      items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
+      items={items}
       setValue={setModelId}
       value={modelId}
     />
@@ -178,6 +184,12 @@ function YearByMakeModel({ controlRef, yearId, setYearId, makeId, modelId }) {
       model_id: parseInt(modelId, 10),
     }
   });
+  const items = uniqBy(data?.uvdb?.vehicle_selector?.uvdb_years?.items, 'id')
+  useEffect(() => {
+    if (items.length === 1 && yearId === null) {
+      setYearId(items[0].id)
+    }
+  }, [items, yearId, setYearId])
 
   if (skip) return <Stub placeholder="Year" />
   if (error) return <Stub placeholder="Error :(" />
@@ -187,7 +199,7 @@ function YearByMakeModel({ controlRef, yearId, setYearId, makeId, modelId }) {
       controlRef={controlRef}
       placeholder="Year"
       loading={loading}
-      items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
+      items={items}
       setValue={setYearId}
       value={yearId}
     />
@@ -196,6 +208,7 @@ function YearByMakeModel({ controlRef, yearId, setYearId, makeId, modelId }) {
 
 function Year({ controlRef, yearId, setYearId }) {
   const { loading, error, data } = useQuery(GET_YEARS);
+  const items = uniqBy(data?.uvdb?.vehicle_selector?.uvdb_years?.items, 'id')
 
   if (error) return <Stub placeholder="Error :(" />
 
@@ -204,7 +217,7 @@ function Year({ controlRef, yearId, setYearId }) {
       controlRef={controlRef}
       placeholder="Year"
       loading={loading}
-      items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
+      items={items}
       setValue={setYearId}
       value={yearId}
     />
@@ -219,6 +232,12 @@ function MakeByYear({ controlRef, makeId, setMakeId, yearId }) {
       year_id: parseInt(yearId, 10)
     }
   });
+  const items = uniqBy(data?.uvdb?.vehicle_selector?.uvdb_makes?.items, 'id')
+  useEffect(() => {
+    if (items.length === 1 && makeId === null) {
+      setMakeId(items[0].id)
+    }
+  }, [items, makeId, setMakeId])
 
   if (skip) return <Stub placeholder="Make" />
   if (error) return <Stub placeholder="Error :(" />
@@ -228,7 +247,7 @@ function MakeByYear({ controlRef, makeId, setMakeId, yearId }) {
       controlRef={controlRef}
       placeholder="Make"
       loading={loading}
-      items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
+      items={items}
       setValue={setMakeId}
       value={makeId}
     />
@@ -244,6 +263,12 @@ function ModelByYearMake({ controlRef, modelId, setModelId, yearId, makeId }) {
       make_id: parseInt(makeId, 10),
     },
   });
+  const items = uniqBy(data?.uvdb?.vehicle_selector?.uvdb_models?.items, 'id')
+  useEffect(() => {
+    if (items.length === 1 && modelId === null) {
+      setModelId(items[0].id)
+    }
+  }, [items, modelId, setModelId])
 
   if (skip) return <Stub placeholder="Model" />
   if (error) return <Stub placeholder="Error :(" />
@@ -253,7 +278,7 @@ function ModelByYearMake({ controlRef, modelId, setModelId, yearId, makeId }) {
       controlRef={controlRef}
       placeholder="Model"
       loading={loading}
-      items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
+      items={items}
       setValue={setModelId}
       value={modelId}
     />
