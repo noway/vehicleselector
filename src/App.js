@@ -93,7 +93,7 @@ const GET_MODELS_BY_YEAR_MAKE = gql`
   }
 `;
 
-function VSSelect({ controlRef, label, placeholder, disabled, items, setValue, value, loading }) {
+function VSSelect({ controlRef, placeholder, disabled, items, setValue, value, loading }) {
   const uniqItems = uniqBy(items, 'id')
   const selectValue = find(uniqItems, { id: value })
   return (
@@ -110,7 +110,7 @@ function VSSelect({ controlRef, label, placeholder, disabled, items, setValue, v
       disabled={disabled}
       onChange={params => {
         if (params.value.length) {
-          setValue(params.value[0].id)          
+          setValue(params.value[0].id)
         }
         else {
           setValue(null)  
@@ -124,19 +124,18 @@ VSSelect.defaultProps = {
   loading: false,
 }
 
-function Stub({ label, placeholder }) {
-  return <VSSelect label={label} placeholder={placeholder} disabled={true} />
+function Stub({ placeholder }) {
+  return <VSSelect placeholder={placeholder} disabled={true} />
 }
 
 function Make({ controlRef, makeId, setMakeId }) {
   const { loading, error, data } = useQuery(GET_MAKES);
 
-  if (error) return <Stub label="Make" placeholder="Error :(" />
+  if (error) return <Stub placeholder="Error :(" />
 
   return (
     <VSSelect
       controlRef={controlRef}
-      label="Make"
       placeholder="Make"
       loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
@@ -155,13 +154,12 @@ function ModelByMake({ controlRef, modelId, setModelId, makeId }) {
     },
   });
 
-  if (skip) return <Stub label="Model" placeholder="Model" />
-  if (error) return <Stub label="Model" placeholder="Error :(" />
+  if (skip) return <Stub placeholder="Model" />
+  if (error) return <Stub placeholder="Error :(" />
 
   return (
     <VSSelect
       controlRef={controlRef}
-      label="Model"
       placeholder="Model"
       loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
@@ -181,13 +179,12 @@ function YearByMakeModel({ controlRef, yearId, setYearId, makeId, modelId }) {
     }
   });
 
-  if (skip) return <Stub label="Year" placeholder="Year" />
-  if (error) return <Stub label="Year" placeholder="Error :(" />
+  if (skip) return <Stub placeholder="Year" />
+  if (error) return <Stub placeholder="Error :(" />
 
   return (
     <VSSelect
       controlRef={controlRef}
-      label="Year"
       placeholder="Year"
       loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
@@ -200,12 +197,11 @@ function YearByMakeModel({ controlRef, yearId, setYearId, makeId, modelId }) {
 function Year({ controlRef, yearId, setYearId }) {
   const { loading, error, data } = useQuery(GET_YEARS);
 
-  if (error) return <Stub label="Year" placeholder="Error :(" />
+  if (error) return <Stub placeholder="Error :(" />
 
   return (
     <VSSelect
       controlRef={controlRef}
-      label="Year"
       placeholder="Year"
       loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
@@ -224,13 +220,12 @@ function MakeByYear({ controlRef, makeId, setMakeId, yearId }) {
     }
   });
 
-  if (skip) return <Stub label="Make" placeholder="Make" />
-  if (error) return <Stub label="Make" placeholder="Error :(" />
+  if (skip) return <Stub placeholder="Make" />
+  if (error) return <Stub placeholder="Error :(" />
 
   return (
     <VSSelect
       controlRef={controlRef}
-      label="Make"
       placeholder="Make"
       loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
@@ -250,13 +245,12 @@ function ModelByYearMake({ controlRef, modelId, setModelId, yearId, makeId }) {
     },
   });
 
-  if (skip) return <Stub label="Model" placeholder="Model" />
-  if (error) return <Stub label="Model" placeholder="Error :(" />
+  if (skip) return <Stub placeholder="Model" />
+  if (error) return <Stub placeholder="Error :(" />
 
   return (
     <VSSelect
       controlRef={controlRef}
-      label="Model"
       placeholder="Model"
       loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
@@ -266,10 +260,14 @@ function ModelByYearMake({ controlRef, modelId, setModelId, yearId, makeId }) {
   )
 }
 
-
-
 function App() {
   const [mode, setMode] = useState('MMY')
+  const modeOptions = [
+    { label: "Make/Model/Year", id: "MMY" },
+    { label: "Year/Make/Model", id: "YMM" },
+  ]
+  const selectMode = find(modeOptions, { id: mode })
+
   const [makeId, setMakeId] = useState(null)
   const [modelId, setModelId] = useState(null)
   const [yearId, setYearId] = useState(null)
@@ -279,12 +277,6 @@ function App() {
   const makeByYearRef = useRef(null)
   const modelByYearMakeRef = useRef(null)
 
-  const modeOptions = [
-    { label: "Make/Model/Year", id: "MMY" },
-    { label: "Year/Make/Model", id: "YMM" }
-  ]
-  const selectMode = find(modeOptions, { id: mode })
-
   return (
     <div className="App">
       <div className="Vehicle-selector-mode">
@@ -292,10 +284,7 @@ function App() {
           <Heading styleLevel={6}>Mode</Heading>
           <Select
             size={SIZE.mini}
-            options={[
-              { label: "Make/Model/Year", id: "MMY" },
-              { label: "Year/Make/Model", id: "YMM" }
-            ]}
+            options={modeOptions}
             value={selectMode ? [selectMode] : []}
             clearable={false}
             onChange={params => {
