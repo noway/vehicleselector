@@ -108,15 +108,15 @@ Select.defaultProps = {
   items: [],
 }
 
-function Stub({ label, message }) {
-  return <Select label={label} placeholder={message} disabled={true} />
+function Stub({ label, placeholder }) {
+  return <Select label={label} placeholder={placeholder} disabled={true} />
 }
 
 function Make({ makeId, setMakeId }) {
   const { loading, error, data } = useQuery(GET_MAKES);
 
-  if (loading) return <Stub label="Make" message="Loading..." />
-  if (error) return <Stub label="Make" message="Error :(" />
+  if (loading) return <Stub label="Make" placeholder="Loading..." />
+  if (error) return <Stub label="Make" placeholder="Error :(" />
 
   return (
     <Select
@@ -138,9 +138,9 @@ function ModelByMake({ modelId, setModelId, makeId }) {
     },
   });
 
-  if (skip) return <Stub label="Model" message="..." />
-  if (loading) return <Stub label="Model" message="Loading..." />
-  if (error) return <Stub label="Model" message="Error :(" />
+  if (skip) return <Stub label="Model" placeholder="..." />
+  if (loading) return <Stub label="Model" placeholder="Loading..." />
+  if (error) return <Stub label="Model" placeholder="Error :(" />
 
   return (
     <Select
@@ -163,9 +163,9 @@ function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
     }
   });
 
-  if (skip) return <Stub label="Year" message="..." />
-  if (loading) return <Stub label="Year" message="Loading..." />
-  if (error) return <Stub label="Year" message="Error :(" />
+  if (skip) return <Stub label="Year" placeholder="..." />
+  if (loading) return <Stub label="Year" placeholder="Loading..." />
+  if (error) return <Stub label="Year" placeholder="Error :(" />
 
   return (
     <Select
@@ -178,11 +178,11 @@ function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
   )
 }
 
-function Year({ yearId, setYearId, makeId, modelId }) {
+function Year({ yearId, setYearId }) {
   const { loading, error, data } = useQuery(GET_YEARS);
 
-  if (loading) return <Stub label="Year" message="Loading..." />
-  if (error) return <Stub label="Year" message="Error :(" />
+  if (loading) return <Stub label="Year" placeholder="Loading..." />
+  if (error) return <Stub label="Year" placeholder="Error :(" />
 
   return (
     <Select
@@ -204,9 +204,9 @@ function MakeByYear({ makeId, setMakeId, yearId }) {
     }
   });
 
-  if (skip) return <Stub label="Make" message="..." />
-  if (loading) return <Stub label="Make" message="Loading..." />
-  if (error) return <Stub label="Make" message="Error :(" />
+  if (skip) return <Stub label="Make" placeholder="..." />
+  if (loading) return <Stub label="Make" placeholder="Loading..." />
+  if (error) return <Stub label="Make" placeholder="Error :(" />
 
   return (
     <Select
@@ -229,9 +229,9 @@ function ModelByYearMake({ modelId, setModelId, yearId, makeId }) {
     },
   });
 
-  if (skip) return <Stub label="Model" message="..." />
-  if (loading) return <Stub label="Model" message="Loading..." />
-  if (error) return <Stub label="Model" message="Error :(" />
+  if (skip) return <Stub label="Model" placeholder="..." />
+  if (loading) return <Stub label="Model" placeholder="Loading..." />
+  if (error) return <Stub label="Model" placeholder="Error :(" />
 
   return (
     <Select
