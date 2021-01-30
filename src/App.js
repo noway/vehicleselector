@@ -94,7 +94,6 @@ const GET_MODELS_BY_YEAR_MAKE = gql`
   }
 `;
 
-
 function VSSelect({ label, placeholder, disabled, items, setValue, value, loading }) {
   const uniqItems = uniqBy(items, 'id')
   const selectValue = find(uniqItems, { id: value })
@@ -279,67 +278,66 @@ function App() {
     <div className="App">
       <div className="Vehicle-selector-mode">
         <HeadingLevel>
-        <Heading styleLevel={6}>Mode</Heading>
-        <Select
-          size={SIZE.mini}
-          options={[
-            { label: "Make/Model/Year", id: "MMY" },
-            { label: "Year/Make/Model", id: "YMM" }
-          ]}
-          value={selectMode ? [selectMode] : []}
-          clearable={false}
-          onChange={params => {
-            if (params.value.length) {
-              setMode(params.value[0].id)          
-            }
-            else {
-              setMode(null)  
-            }
-          }}
-        />
+          <Heading styleLevel={6}>Mode</Heading>
+          <Select
+            size={SIZE.mini}
+            options={[
+              { label: "Make/Model/Year", id: "MMY" },
+              { label: "Year/Make/Model", id: "YMM" }
+            ]}
+            value={selectMode ? [selectMode] : []}
+            clearable={false}
+            onChange={params => {
+              if (params.value.length) {
+                setMode(params.value[0].id)
+              }
+              else {
+                setMode(null)
+              }
+            }}
+          />
         </HeadingLevel>
       </div>
       <div className="Vehicle-selector-body">
         <HeadingLevel>
-        <Heading styleLevel={6}>Vehicle</Heading>
-      {mode === 'MMY' ? 
-        <div className="Vehicle-selector-row">
-          <Make
-            makeId={makeId}
-            setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null)}}
-          />
-          <ModelByMake
-            modelId={modelId}
-            setModelId={(val) => {setModelId(val); setYearId(null)}}
-            makeId={makeId}
-          /> 
-          <YearByMakeModel
-            yearId={yearId}
-            setYearId={(val) => {setYearId(val)}}
-            makeId={makeId}
-            modelId={modelId}
-          />
-        </div> :
-        <div className="Vehicle-selector-row">
-          <Year
-            yearId={yearId}
-            setYearId={(val) => {setYearId(val); setMakeId(null); setModelId(null)}}
-          />
-          <MakeByYear
-            makeId={makeId}
-            setMakeId={(val) => {setMakeId(val); setModelId(null)}}
-            yearId={yearId}
-          /> 
-          <ModelByYearMake
-            modelId={modelId}
-            setModelId={(val) => {setModelId(val)}}
-            yearId={yearId}
-            makeId={makeId}
-          />
-        </div>}
-        
+          <Heading styleLevel={6}>Vehicle</Heading>
+          {mode === 'MMY' ?
+            <div className="Vehicle-selector-row">
+              <Make
+                makeId={makeId}
+                setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null)}}
+              />
+              <ModelByMake
+                modelId={modelId}
+                setModelId={(val) => {setModelId(val); setYearId(null)}}
+                makeId={makeId}
+              />
+              <YearByMakeModel
+                yearId={yearId}
+                setYearId={(val) => {setYearId(val)}}
+                makeId={makeId}
+                modelId={modelId}
+              />
+            </div> :
+            <div className="Vehicle-selector-row">
+              <Year
+                yearId={yearId}
+                setYearId={(val) => {setYearId(val); setMakeId(null); setModelId(null)}}
+              />
+              <MakeByYear
+                makeId={makeId}
+                setMakeId={(val) => {setMakeId(val); setModelId(null)}}
+                yearId={yearId}
+              />
+              <ModelByYearMake
+                modelId={modelId}
+                setModelId={(val) => {setModelId(val)}}
+                yearId={yearId}
+                makeId={makeId}
+              />
+            </div>}
         </HeadingLevel>
-        </div>
+      </div>
     </div>
   );
 }
