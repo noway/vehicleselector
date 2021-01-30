@@ -1,6 +1,6 @@
 import './App.css';
 import { gql, useQuery } from '@apollo/client';
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { find, uniqBy } from 'lodash'
 import { Select, TYPE, SIZE } from "baseui/select";
 import {Heading, HeadingLevel} from 'baseui/heading';
@@ -93,11 +93,12 @@ const GET_MODELS_BY_YEAR_MAKE = gql`
   }
 `;
 
-function VSSelect({ label, placeholder, disabled, items, setValue, value, loading }) {
+function VSSelect({ controlRef, label, placeholder, disabled, items, setValue, value, loading }) {
   const uniqItems = uniqBy(items, 'id')
   const selectValue = find(uniqItems, { id: value })
   return (
     <Select
+      controlRef={controlRef}
       size={SIZE.mini}
       options={uniqItems.map(({name, id}) => ({ label: name ?? id, id: id }))}
       value={selectValue ? [selectValue] : []}
@@ -127,13 +128,14 @@ function Stub({ label, placeholder }) {
   return <VSSelect label={label} placeholder={placeholder} disabled={true} />
 }
 
-function Make({ makeId, setMakeId }) {
+function Make({ controlRef, makeId, setMakeId }) {
   const { loading, error, data } = useQuery(GET_MAKES);
 
   if (error) return <Stub label="Make" placeholder="Error :(" />
 
   return (
     <VSSelect
+      controlRef={controlRef}
       label="Make"
       placeholder="Make"
       loading={loading}
@@ -144,7 +146,7 @@ function Make({ makeId, setMakeId }) {
   )
 }
 
-function ModelByMake({ modelId, setModelId, makeId }) {
+function ModelByMake({ controlRef, modelId, setModelId, makeId }) {
   const skip = makeId === null
   const { loading, error, data } = useQuery(GET_MODELS_BY_MAKE, {
     skip,
@@ -158,6 +160,7 @@ function ModelByMake({ modelId, setModelId, makeId }) {
 
   return (
     <VSSelect
+      controlRef={controlRef}
       label="Model"
       placeholder="Model"
       loading={loading}
@@ -168,7 +171,7 @@ function ModelByMake({ modelId, setModelId, makeId }) {
   )
 }
 
-function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
+function YearByMakeModel({ controlRef, yearId, setYearId, makeId, modelId }) {
   const skip = makeId === null || modelId === null
   const { loading, error, data } = useQuery(GET_YEARS_BY_MAKE_MODEL, {
     skip,
@@ -183,6 +186,7 @@ function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
 
   return (
     <VSSelect
+      controlRef={controlRef}
       label="Year"
       placeholder="Year"
       loading={loading}
@@ -193,13 +197,14 @@ function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
   )
 }
 
-function Year({ yearId, setYearId }) {
+function Year({ controlRef, yearId, setYearId }) {
   const { loading, error, data } = useQuery(GET_YEARS);
 
   if (error) return <Stub label="Year" placeholder="Error :(" />
 
   return (
     <VSSelect
+      controlRef={controlRef}
       label="Year"
       placeholder="Year"
       loading={loading}
@@ -210,7 +215,7 @@ function Year({ yearId, setYearId }) {
   )
 }
 
-function MakeByYear({ makeId, setMakeId, yearId }) {
+function MakeByYear({ controlRef, makeId, setMakeId, yearId }) {
   const skip = yearId === null
   const { loading, error, data } = useQuery(GET_MAKES_BY_YEAR, {
     skip,
@@ -224,6 +229,7 @@ function MakeByYear({ makeId, setMakeId, yearId }) {
 
   return (
     <VSSelect
+      controlRef={controlRef}
       label="Make"
       placeholder="Make"
       loading={loading}
@@ -234,7 +240,7 @@ function MakeByYear({ makeId, setMakeId, yearId }) {
   )
 }
 
-function ModelByYearMake({ modelId, setModelId, yearId, makeId }) {
+function ModelByYearMake({ controlRef, modelId, setModelId, yearId, makeId }) {
   const skip = yearId === null || makeId === null
   const { loading, error, data } = useQuery(GET_MODELS_BY_YEAR_MAKE, {
     skip,
@@ -249,6 +255,7 @@ function ModelByYearMake({ modelId, setModelId, yearId, makeId }) {
 
   return (
     <VSSelect
+      controlRef={controlRef}
       label="Model"
       placeholder="Model"
       loading={loading}
@@ -266,6 +273,11 @@ function App() {
   const [makeId, setMakeId] = useState(null)
   const [modelId, setModelId] = useState(null)
   const [yearId, setYearId] = useState(null)
+
+  const modelByMakeRef = useRef(null)
+  const yearByMakeModelRef = useRef(null)
+  const makeByYearRef = useRef(null)
+  const modelByYearMakeRef = useRef(null)
 
   const modeOptions = [
     { label: "Make/Model/Year", id: "MMY" },
@@ -304,14 +316,16 @@ function App() {
             <div className="Vehicle-selector-row">
               <Make
                 makeId={makeId}
-                setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null)}}
+                setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null); setImmediate(() => modelByMakeRef.current?.focus())}}
               />
               <ModelByMake
+                controlRef={modelByMakeRef}
                 modelId={modelId}
-                setModelId={(val) => {setModelId(val); setYearId(null)}}
+                setModelId={(val) => {setModelId(val); setYearId(null); setImmediate(() => yearByMakeModelRef.current?.focus())}}
                 makeId={makeId}
               />
               <YearByMakeModel
+                controlRef={yearByMakeModelRef}
                 yearId={yearId}
                 setYearId={(val) => {setYearId(val)}}
                 makeId={makeId}
@@ -321,14 +335,16 @@ function App() {
             <div className="Vehicle-selector-row">
               <Year
                 yearId={yearId}
-                setYearId={(val) => {setYearId(val); setMakeId(null); setModelId(null)}}
+                setYearId={(val) => {setYearId(val); setMakeId(null); setModelId(null); setImmediate(() => makeByYearRef.current?.focus())}}
               />
               <MakeByYear
+                controlRef={makeByYearRef}
                 makeId={makeId}
-                setMakeId={(val) => {setMakeId(val); setModelId(null)}}
+                setMakeId={(val) => {setMakeId(val); setModelId(null); setImmediate(() => modelByYearMakeRef.current?.focus())}}
                 yearId={yearId}
               />
               <ModelByYearMake
+                controlRef={modelByYearMakeRef}
                 modelId={modelId}
                 setModelId={(val) => {setModelId(val)}}
                 yearId={yearId}
