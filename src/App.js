@@ -5,7 +5,7 @@ import { useState } from 'react'
 // TODO: configure limit
 
 const GET_MAKES = gql`
-  {
+  query getMakes {
     uvdb {
       vehicle_selector {
         uvdb_makes(limit:500) {
@@ -19,7 +19,7 @@ const GET_MAKES = gql`
   }
 `;
 const GET_MODELS_BY_MAKE = gql`
-  query Model($make_id: Int!) {
+  query getModelsByMake($make_id: Int!) {
     uvdb {
       vehicle_selector {
         uvdb_models(uvdb_make_id: $make_id, limit:500) {
@@ -33,7 +33,7 @@ const GET_MODELS_BY_MAKE = gql`
   }
 `;
 const GET_YEARS_BY_MAKE_MODEL = gql`
-  query Year($make_id: Int!, $model_id: Int!) {
+  query getYearsByMakeModel($make_id: Int!, $model_id: Int!) {
     uvdb {
       vehicle_selector {
         uvdb_years(uvdb_make_id: $make_id, uvdb_model_id: $model_id, limit:500) {
@@ -47,7 +47,7 @@ const GET_YEARS_BY_MAKE_MODEL = gql`
 `;
 
 const GET_YEARS = gql`
-  query Year {
+  query getYears {
     uvdb {
       vehicle_selector {
         uvdb_years(limit:500) {
@@ -61,7 +61,7 @@ const GET_YEARS = gql`
 `;
 
 const GET_MAKES_BY_YEAR = gql`
-  query Make($year_id: Int!) {
+  query getMakesByYear($year_id: Int!) {
     uvdb {
       vehicle_selector {
         uvdb_makes(uvdb_year_id: $year_id, limit:500) {
@@ -76,7 +76,7 @@ const GET_MAKES_BY_YEAR = gql`
 `;
 
 const GET_MODELS_BY_YEAR_MAKE = gql`
-  query Model($year_id: Int!, $make_id: Int!) {
+  query getModelsByYearMake($year_id: Int!, $make_id: Int!) {
     uvdb {
       vehicle_selector {
         uvdb_models(uvdb_year_id: $year_id, uvdb_make_id: $make_id, limit:500) {
