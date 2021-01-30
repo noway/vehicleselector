@@ -268,13 +268,32 @@ function App() {
   const [modelId, setModelId] = useState(null)
   const [yearId, setYearId] = useState(null)
 
+  const modeOptions = [
+    { label: "Make/Model/Year", id: "MMY" },
+    { label: "Year/Make/Model", id: "YMM" }
+  ]
+  const selectMode = find(modeOptions, { id: mode })
+
   return (
     <div className="App">
-      <div>
-        <select value={mode} onChange={e => setMode(e.target.value)}>
-          <option value="MMY">Make/Model/Year</option>
-          <option value="YMM">Year/Make/Model</option>
-        </select>
+      <div className="Vehicle-selector-mode">
+        <Select
+          size={SIZE.mini}
+          options={[
+            { label: "Make/Model/Year", id: "MMY" },
+            { label: "Year/Make/Model", id: "YMM" }
+          ]}
+          value={selectMode ? [selectMode] : []}
+          clearable={false}
+          onChange={params => {
+            if (params.value.length) {
+              setMode(params.value[0].id)          
+            }
+            else {
+              setMode(null)  
+            }
+          }}
+        />
       </div>
       {mode === 'MMY' ? 
         <div className="Vehicle-selector-row">
