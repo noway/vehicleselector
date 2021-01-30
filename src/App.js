@@ -3,7 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 import { useState, useRef } from 'react'
 import { find, uniqBy } from 'lodash'
 import { Select, TYPE, SIZE } from "baseui/select";
-import {Heading, HeadingLevel} from 'baseui/heading';
+import { Heading, HeadingLevel } from 'baseui/heading';
 
 const LIMIT = 500
 

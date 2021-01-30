@@ -4,13 +4,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import {Client as Styletron} from 'styletron-engine-atomic';
-import {Provider as StyletronProvider} from 'styletron-react';
-import {LightTheme, BaseProvider, styled} from 'baseui';
+import { Client as Styletron } from 'styletron-engine-atomic';
+import { Provider as StyletronProvider } from 'styletron-react';
+import { LightTheme, BaseProvider, styled } from 'baseui';
 
 const engine = new Styletron();
-
-
 const client = new ApolloClient({
   uri: 'https://api.parts-pal.com/node-api/graphql',
   cache: new InMemoryCache()
