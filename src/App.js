@@ -295,6 +295,7 @@ function App() {
           }}
         />
       </div>
+      <div className="Vehicle-selector-body">
       {mode === 'MMY' ? 
         <div className="Vehicle-selector-row">
           <Make
@@ -330,6 +331,7 @@ function App() {
             makeId={makeId}
           />
         </div>}
+        </div>
     </div>
   );
 }
