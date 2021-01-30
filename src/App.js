@@ -2,7 +2,6 @@ import './App.css';
 import { gql, useQuery } from '@apollo/client';
 import { useState } from 'react'
 import { find, uniqBy } from 'lodash'
-import {StatefulInput} from 'baseui/input';
 import { Select, TYPE, SIZE } from "baseui/select";
 import {Heading, HeadingLevel} from 'baseui/heading';
 
