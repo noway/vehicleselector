@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { find, uniqBy } from 'lodash'
 import {StatefulInput} from 'baseui/input';
 import { Select, TYPE, SIZE } from "baseui/select";
+import {Heading, HeadingLevel} from 'baseui/heading';
 
 const LIMIT = 500
 
@@ -277,6 +278,8 @@ function App() {
   return (
     <div className="App">
       <div className="Vehicle-selector-mode">
+        <HeadingLevel>
+        <Heading styleLevel={6}>Mode</Heading>
         <Select
           size={SIZE.mini}
           options={[
@@ -294,8 +297,11 @@ function App() {
             }
           }}
         />
+        </HeadingLevel>
       </div>
       <div className="Vehicle-selector-body">
+        <HeadingLevel>
+        <Heading styleLevel={6}>Vehicle</Heading>
       {mode === 'MMY' ? 
         <div className="Vehicle-selector-row">
           <Make
@@ -331,6 +337,8 @@ function App() {
             makeId={makeId}
           />
         </div>}
+        
+        </HeadingLevel>
         </div>
     </div>
   );
