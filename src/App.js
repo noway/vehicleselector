@@ -1,7 +1,9 @@
 import './App.css';
 import { gql, useQuery } from '@apollo/client';
 import { useState } from 'react'
-import { uniqBy } from 'lodash'
+import { find, uniqBy } from 'lodash'
+import {StatefulInput} from 'baseui/input';
+import { Select, TYPE, SIZE } from "baseui/select";
 
 const LIMIT = 500
 
@@ -92,7 +94,31 @@ const GET_MODELS_BY_YEAR_MAKE = gql`
 `;
 
 
-function Select({ label, placeholder, disabled, items, setValue, value }) {
+function VSSelect({ label, placeholder, disabled, items, setValue, value, loading }) {
+
+  const uniqItems = uniqBy(items, 'id')
+  const selectValue = find(uniqItems, { id: value })
+  return (
+    <Select
+      size={SIZE.mini}
+      options={uniqItems.map(({name, id}) => ({ label: name ?? id, id: id }))}
+      value={selectValue ? [selectValue] : []}
+      placeholder={placeholder}
+      maxDropdownHeight="300px"
+      isLoading={loading}
+      type={TYPE.search}
+      clearable={false}
+      disabled={disabled}
+      onChange={params => {
+        if (params.value.length) {
+          setValue(params.value[0].id)          
+        }
+        else {
+          setValue(null)  
+        }
+      }}
+    />
+  )
   return (
     <>
       <span>{label}: </span>
@@ -105,24 +131,25 @@ function Select({ label, placeholder, disabled, items, setValue, value }) {
     </>
   )
 }
-Select.defaultProps = {
+VSSelect.defaultProps = {
   items: [],
+  loading: false,
 }
 
 function Stub({ label, placeholder }) {
-  return <Select label={label} placeholder={placeholder} disabled={true} />
+  return <VSSelect label={label} placeholder={placeholder} disabled={true} />
 }
 
 function Make({ makeId, setMakeId }) {
   const { loading, error, data } = useQuery(GET_MAKES);
 
-  if (loading) return <Stub label="Make" placeholder="Loading..." />
   if (error) return <Stub label="Make" placeholder="Error :(" />
 
   return (
-    <Select
+    <VSSelect
       label="Make"
-      placeholder="Please select"
+      placeholder="Make"
+      loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
       setValue={setMakeId}
       value={makeId}
@@ -139,14 +166,14 @@ function ModelByMake({ modelId, setModelId, makeId }) {
     },
   });
 
-  if (skip) return <Stub label="Model" placeholder="..." />
-  if (loading) return <Stub label="Model" placeholder="Loading..." />
+  if (skip) return <Stub label="Model" placeholder="Model" />
   if (error) return <Stub label="Model" placeholder="Error :(" />
 
   return (
-    <Select
+    <VSSelect
       label="Model"
-      placeholder="Please select"
+      placeholder="Model"
+      loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
       setValue={setModelId}
       value={modelId}
@@ -164,14 +191,14 @@ function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
     }
   });
 
-  if (skip) return <Stub label="Year" placeholder="..." />
-  if (loading) return <Stub label="Year" placeholder="Loading..." />
+  if (skip) return <Stub label="Year" placeholder="Year" />
   if (error) return <Stub label="Year" placeholder="Error :(" />
 
   return (
-    <Select
+    <VSSelect
       label="Year"
-      placeholder="Please select"
+      placeholder="Year"
+      loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
       setValue={setYearId}
       value={yearId}
@@ -182,13 +209,13 @@ function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
 function Year({ yearId, setYearId }) {
   const { loading, error, data } = useQuery(GET_YEARS);
 
-  if (loading) return <Stub label="Year" placeholder="Loading..." />
   if (error) return <Stub label="Year" placeholder="Error :(" />
 
   return (
-    <Select
+    <VSSelect
       label="Year"
-      placeholder="Please select"
+      placeholder="Year"
+      loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
       setValue={setYearId}
       value={yearId}
@@ -205,14 +232,14 @@ function MakeByYear({ makeId, setMakeId, yearId }) {
     }
   });
 
-  if (skip) return <Stub label="Make" placeholder="..." />
-  if (loading) return <Stub label="Make" placeholder="Loading..." />
+  if (skip) return <Stub label="Make" placeholder="Make" />
   if (error) return <Stub label="Make" placeholder="Error :(" />
 
   return (
-    <Select
+    <VSSelect
       label="Make"
-      placeholder="Please select"
+      placeholder="Make"
+      loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
       setValue={setMakeId}
       value={makeId}
@@ -230,14 +257,14 @@ function ModelByYearMake({ modelId, setModelId, yearId, makeId }) {
     },
   });
 
-  if (skip) return <Stub label="Model" placeholder="..." />
-  if (loading) return <Stub label="Model" placeholder="Loading..." />
+  if (skip) return <Stub label="Model" placeholder="Model" />
   if (error) return <Stub label="Model" placeholder="Error :(" />
 
   return (
-    <Select
+    <VSSelect
       label="Model"
-      placeholder="Please select"
+      placeholder="Model"
+      loading={loading}
       items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
       setValue={setModelId}
       value={modelId}
@@ -262,7 +289,7 @@ function App() {
         </select>
       </div>
       {mode === 'MMY' ? 
-        <>
+        <div className="Vehicle-selector-row">
           <Make
             makeId={makeId}
             setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null)}}
@@ -278,8 +305,8 @@ function App() {
             makeId={makeId}
             modelId={modelId}
           />
-        </> :
-        <>
+        </div> :
+        <div className="Vehicle-selector-row">
           <Year
             yearId={yearId}
             setYearId={(val) => {setYearId(val); setMakeId(null); setModelId(null)}}
@@ -295,7 +322,7 @@ function App() {
             yearId={yearId}
             makeId={makeId}
           />
-        </>}
+        </div>}
     </div>
   );
 }

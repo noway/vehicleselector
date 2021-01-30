@@ -8,6 +8,8 @@ import {Client as Styletron} from 'styletron-engine-atomic';
 import {Provider as StyletronProvider} from 'styletron-react';
 import {LightTheme, BaseProvider, styled} from 'baseui';
 
+const engine = new Styletron();
+
 
 const client = new ApolloClient({
   uri: 'https://api.parts-pal.com/node-api/graphql',
@@ -17,9 +19,11 @@ const client = new ApolloClient({
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <BaseProvider theme={LightTheme}>
-        <App />
-      </BaseProvider>
+      <StyletronProvider value={engine}>
+        <BaseProvider theme={LightTheme}>
+          <App />
+        </BaseProvider>
+      </StyletronProvider>
     </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')
