@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 // TODO: configure limit
 
-const GET_ALL_MAKES = gql`
+const GET_MAKES = gql`
   {
     uvdb {
       vehicle_selector {
@@ -46,7 +46,7 @@ const GET_YEARS_BY_MAKE_MODEL = gql`
   }
 `;
 
-const GET_ALL_YEARS = gql`
+const GET_YEARS = gql`
   query Year {
     uvdb {
       vehicle_selector {
@@ -104,13 +104,16 @@ function Select({ label, placeholder, disabled, items, setValue, value }) {
     </>
   )
 }
+Select.defaultProps = {
+  items: [],
+}
 
 function Stub({ label, message }) {
-  return <Select label={label} placeholder={message} disabled={true} items={[]} />
+  return <Select label={label} placeholder={message} disabled={true} />
 }
 
 function Make({ makeId, setMakeId }) {
-  const { loading, error, data } = useQuery(GET_ALL_MAKES);
+  const { loading, error, data } = useQuery(GET_MAKES);
 
   if (loading) return <Stub label="Make" message="Loading..." />
   if (error) return <Stub label="Make" message="Error :(" />
@@ -127,14 +130,15 @@ function Make({ makeId, setMakeId }) {
 }
 
 function ModelByMake({ modelId, setModelId, makeId }) {
+  const skip = makeId === null
   const { loading, error, data } = useQuery(GET_MODELS_BY_MAKE, {
-    skip: makeId === null,
+    skip,
     variables: {
       make_id: parseInt(makeId, 10),
     },
   });
 
-  if (makeId === null) return <Stub label="Model" message="..." />
+  if (skip) return <Stub label="Model" message="..." />
   if (loading) return <Stub label="Model" message="Loading..." />
   if (error) return <Stub label="Model" message="Error :(" />
 
@@ -150,15 +154,16 @@ function ModelByMake({ modelId, setModelId, makeId }) {
 }
 
 function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
+  const skip = makeId === null || modelId === null
   const { loading, error, data } = useQuery(GET_YEARS_BY_MAKE_MODEL, {
-    skip: makeId === null || modelId === null,
+    skip,
     variables: {
       make_id: parseInt(makeId, 10),
       model_id: parseInt(modelId, 10),
     }
   });
 
-  if (makeId === null || modelId === null) return <Stub label="Year" message="..." />
+  if (skip) return <Stub label="Year" message="..." />
   if (loading) return <Stub label="Year" message="Loading..." />
   if (error) return <Stub label="Year" message="Error :(" />
 
@@ -174,7 +179,7 @@ function YearByMakeModel({ yearId, setYearId, makeId, modelId }) {
 }
 
 function Year({ yearId, setYearId, makeId, modelId }) {
-  const { loading, error, data } = useQuery(GET_ALL_YEARS);
+  const { loading, error, data } = useQuery(GET_YEARS);
 
   if (loading) return <Stub label="Year" message="Loading..." />
   if (error) return <Stub label="Year" message="Error :(" />
@@ -191,14 +196,15 @@ function Year({ yearId, setYearId, makeId, modelId }) {
 }
 
 function MakeByYear({ makeId, setMakeId, yearId }) {
+  const skip = yearId === null
   const { loading, error, data } = useQuery(GET_MAKES_BY_YEAR, {
-    skip: yearId === null,
+    skip,
     variables: {
       year_id: parseInt(yearId, 10)
     }
   });
 
-  if (yearId === null) return <Stub label="Make" message="..." />
+  if (skip) return <Stub label="Make" message="..." />
   if (loading) return <Stub label="Make" message="Loading..." />
   if (error) return <Stub label="Make" message="Error :(" />
 
@@ -214,15 +220,16 @@ function MakeByYear({ makeId, setMakeId, yearId }) {
 }
 
 function ModelByYearMake({ modelId, setModelId, yearId, makeId }) {
+  const skip = yearId === null || makeId === null
   const { loading, error, data } = useQuery(GET_MODELS_BY_YEAR_MAKE, {
-    skip: yearId === null || makeId === null,
+    skip,
     variables: {
       year_id: parseInt(yearId, 10),
       make_id: parseInt(makeId, 10),
     },
   });
 
-  if (yearId === null || makeId === null) return <Stub label="Model" message="..." />
+  if (skip) return <Stub label="Model" message="..." />
   if (loading) return <Stub label="Model" message="Loading..." />
   if (error) return <Stub label="Model" message="Error :(" />
 
