@@ -130,9 +130,13 @@ function Make({ makeId, setMakeId }) {
 
 function Model({ modelId, setModelId, makeId }) {
   const { loading, error, data } = useQuery(GET_MODELS_BY_MAKE, {
-    variables: { make_id: parseInt(makeId, 10) },
+    skip: makeId === null,
+    variables: {
+      make_id: parseInt(makeId, 10),
+    },
   });
 
+  if (makeId === null) return <Stub label="Model" message="..." />
   if (loading) return <Stub label="Model" message="Loading..." />
   if (error) return <Stub label="Model" message="Error :(" />
 
@@ -151,12 +155,14 @@ function Model({ modelId, setModelId, makeId }) {
 
 function Year({ yearId, setYearId, makeId, modelId }) {
   const { loading, error, data } = useQuery(GET_YEARS_BY_MAKE_MODEL, {
+    skip: makeId === null || modelId === null,
     variables: {
       make_id: parseInt(makeId, 10),
       model_id: parseInt(modelId, 10),
     }
   });
 
+  if (makeId === null || modelId === null) return <Stub label="Year" message="..." />
   if (loading) return <Stub label="Year" message="Loading..." />
   if (error) return <Stub label="Year" message="Error :(" />
 
@@ -194,11 +200,13 @@ function Year2({ yearId, setYearId, makeId, modelId }) {
 
 function Make2({ makeId, setMakeId, yearId }) {
   const { loading, error, data } = useQuery(GET_MAKES_BY_YEAR, {
+    skip: yearId === null,
     variables: {
       year_id: parseInt(yearId, 10)
     }
   });
 
+  if (yearId === null) return <Stub label="Make" message="..." />
   if (loading) return <Stub label="Make" message="Loading..." />
   if (error) return <Stub label="Make" message="Error :(" />
 
@@ -217,12 +225,14 @@ function Make2({ makeId, setMakeId, yearId }) {
 
 function Model2({ modelId, setModelId, yearId, makeId }) {
   const { loading, error, data } = useQuery(GET_MODELS_BY_YEAR_MAKE, {
+    skip: yearId === null || makeId === null,
     variables: {
       year_id: parseInt(yearId, 10),
       make_id: parseInt(makeId, 10),
     },
   });
 
+  if (yearId === null || makeId === null) return <Stub label="Model" message="..." />
   if (loading) return <Stub label="Model" message="Loading..." />
   if (error) return <Stub label="Model" message="Error :(" />
 
@@ -261,42 +271,34 @@ function App() {
             makeId={makeId}
             setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null)}}
           />
-          {makeId !== null ?
-            <Model
-              modelId={modelId}
-              setModelId={(val) => {setModelId(val); setYearId(null)}}
-              makeId={makeId}
-            /> 
-            : <Stub label="Model" message="..." />}
-          {makeId !== null && modelId !== null ?
-            <Year
-              yearId={yearId}
-              setYearId={(val) => {setYearId(val)}}
-              makeId={makeId}
-              modelId={modelId}
-            />
-            : <Stub label="Year" message="..." />}
+          <Model
+            modelId={modelId}
+            setModelId={(val) => {setModelId(val); setYearId(null)}}
+            makeId={makeId}
+          /> 
+          <Year
+            yearId={yearId}
+            setYearId={(val) => {setYearId(val)}}
+            makeId={makeId}
+            modelId={modelId}
+          />
         </> :
         <>
           <Year2
             yearId={yearId}
             setYearId={(val) => {setYearId(val); setMakeId(null); setModelId(null)}}
           />
-          {yearId !== null ?
-            <Make2
-              makeId={makeId}
-              setMakeId={(val) => {setMakeId(val); setModelId(null)}}
-              yearId={yearId}
-            /> 
-            : <Stub label="Make" message="..." />}
-          {yearId !== null && makeId !== null ?
-            <Model2
-              modelId={modelId}
-              setModelId={(val) => {setModelId(val)}}
-              yearId={yearId}
-              makeId={makeId}
-            />
-            : <Stub label="Model" message="..." />}
+          <Make2
+            makeId={makeId}
+            setMakeId={(val) => {setMakeId(val); setModelId(null)}}
+            yearId={yearId}
+          /> 
+          <Model2
+            modelId={modelId}
+            setModelId={(val) => {setModelId(val)}}
+            yearId={yearId}
+            makeId={makeId}
+          />
         </>}
     </div>
   );
