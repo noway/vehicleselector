@@ -1,6 +1,7 @@
 import './App.css';
 import { gql, useQuery } from '@apollo/client';
 import { useState } from 'react'
+import { uniqBy } from 'lodash'
 
 // TODO: configure limit
 
@@ -97,7 +98,7 @@ function Select({ label, placeholder, disabled, items, setValue, value }) {
       <span>{label}: </span>
       <select onChange={e => setValue(e.target.value)} value={value ?? ""} disabled={disabled}>
         <option value="">{placeholder}</option>
-        {items.map(({ id, name }) => (
+        {uniqBy(items, 'id').map(({ id, name }) => (
           <option value={id} key={id}>{name ?? id}</option>
         ))}
       </select>
