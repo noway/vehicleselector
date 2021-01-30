@@ -95,7 +95,6 @@ const GET_MODELS_BY_YEAR_MAKE = gql`
 
 
 function VSSelect({ label, placeholder, disabled, items, setValue, value, loading }) {
-
   const uniqItems = uniqBy(items, 'id')
   const selectValue = find(uniqItems, { id: value })
   return (
@@ -118,17 +117,6 @@ function VSSelect({ label, placeholder, disabled, items, setValue, value, loadin
         }
       }}
     />
-  )
-  return (
-    <>
-      <span>{label}: </span>
-      <select onChange={e => setValue(e.target.value)} value={value ?? ""} disabled={disabled}>
-        <option value="">{placeholder}</option>
-        {uniqBy(items, 'id').map(({ id, name }) => (
-          <option value={id} key={id}>{name ?? id}</option>
-        ))}
-      </select>
-    </>
   )
 }
 VSSelect.defaultProps = {
