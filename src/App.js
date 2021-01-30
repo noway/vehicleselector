@@ -2,6 +2,8 @@ import './App.css';
 import { gql, useQuery } from '@apollo/client';
 import { useState } from 'react'
 
+// TODO: configure limit
+
 const GET_ALL_MAKES = gql`
   {
     uvdb {
@@ -43,6 +45,51 @@ const GET_YEARS_BY_MAKE_MODEL = gql`
     }
   }
 `;
+
+const GET_ALL_YEARS = gql`
+  query Year {
+    uvdb {
+      vehicle_selector {
+        uvdb_years(limit:500) {
+          items {
+            id
+          }
+        }
+      }
+    }
+  }
+`;
+
+const GET_MAKES_BY_YEAR = gql`
+  query Make($year_id: Int!) {
+    uvdb {
+      vehicle_selector {
+        uvdb_makes(uvdb_year_id: $year_id, limit:500) {
+          items {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
+const GET_MODELS_BY_YEAR_MAKE = gql`
+  query Model($year_id: Int!, $make_id: Int!) {
+    uvdb {
+      vehicle_selector {
+        uvdb_models(uvdb_year_id: $year_id, uvdb_make_id: $make_id, limit:500) {
+          items {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 
 function Select({ label, placeholder, disabled, items, setValue, value }) {
   return (
@@ -126,33 +173,131 @@ function Year({ yearId, setYearId, makeId, modelId }) {
   )
 }
 
+function Year2({ yearId, setYearId, makeId, modelId }) {
+  const { loading, error, data } = useQuery(GET_ALL_YEARS);
+
+  if (loading) return <Stub label="Year" message="Loading..." />
+  if (error) return <Stub label="Year" message="Error :(" />
+
+  return (
+    <>
+      <Select
+        label="Year"
+        placeholder="Please select"
+        items={data?.uvdb?.vehicle_selector?.uvdb_years?.items}
+        setValue={setYearId}
+        value={yearId}
+      />
+    </>
+  )
+}
+
+function Make2({ makeId, setMakeId, yearId }) {
+  const { loading, error, data } = useQuery(GET_MAKES_BY_YEAR, {
+    variables: {
+      year_id: parseInt(yearId, 10)
+    }
+  });
+
+  if (loading) return <Stub label="Make" message="Loading..." />
+  if (error) return <Stub label="Make" message="Error :(" />
+
+  return (
+    <>
+      <Select
+        label="Make"
+        placeholder="Please select"
+        items={data?.uvdb?.vehicle_selector?.uvdb_makes?.items}
+        setValue={setMakeId}
+        value={makeId}
+      />
+    </>
+  )
+}
+
+function Model2({ modelId, setModelId, yearId, makeId }) {
+  const { loading, error, data } = useQuery(GET_MODELS_BY_YEAR_MAKE, {
+    variables: {
+      year_id: parseInt(yearId, 10),
+      make_id: parseInt(makeId, 10),
+    },
+  });
+
+  if (loading) return <Stub label="Model" message="Loading..." />
+  if (error) return <Stub label="Model" message="Error :(" />
+
+  return (
+    <>
+      <Select
+        label="Model"
+        placeholder="Please select"
+        items={data?.uvdb?.vehicle_selector?.uvdb_models?.items}
+        setValue={setModelId}
+        value={modelId}
+      />
+    </>
+  )
+}
+
+
 
 function App() {
+  const [mode, setMode] = useState('MMY')
   const [makeId, setMakeId] = useState(null)
   const [modelId, setModelId] = useState(null)
   const [yearId, setYearId] = useState(null)
 
   return (
     <div className="App">
-      <Make
-        makeId={makeId}
-        setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null)}}
-      />
-      {makeId !== null ?
-        <Model
-          modelId={modelId}
-          setModelId={(val) => {setModelId(val); setYearId(null)}}
-          makeId={makeId}
-        /> 
-        : <Stub label="Model" message="..." />}
-      {makeId !== null && modelId !== null ?
-        <Year
-          yearId={yearId}
-          setYearId={setYearId}
-          makeId={makeId}
-          modelId={modelId}
-        />
-        : <Stub label="Year" message="..." />}
+      <div>
+        <select value={mode} onChange={e => setMode(e.target.value)}>
+          <option value="MMY">Make/Model/Year</option>
+          <option value="YMM">Year/Make/Model</option>
+        </select>
+      </div>
+      {mode === 'MMY' ? 
+        <>
+          <Make
+            makeId={makeId}
+            setMakeId={(val) => {setMakeId(val); setModelId(null); setYearId(null)}}
+          />
+          {makeId !== null ?
+            <Model
+              modelId={modelId}
+              setModelId={(val) => {setModelId(val); setYearId(null)}}
+              makeId={makeId}
+            /> 
+            : <Stub label="Model" message="..." />}
+          {makeId !== null && modelId !== null ?
+            <Year
+              yearId={yearId}
+              setYearId={(val) => {setYearId(val)}}
+              makeId={makeId}
+              modelId={modelId}
+            />
+            : <Stub label="Year" message="..." />}
+        </> :
+        <>
+          <Year2
+            yearId={yearId}
+            setYearId={(val) => {setYearId(val); setMakeId(null); setModelId(null)}}
+          />
+          {yearId !== null ?
+            <Make2
+              makeId={makeId}
+              setMakeId={(val) => {setMakeId(val); setModelId(null)}}
+              yearId={yearId}
+            /> 
+            : <Stub label="Make" message="..." />}
+          {yearId !== null && makeId !== null ?
+            <Model2
+              modelId={modelId}
+              setModelId={(val) => {setModelId(val)}}
+              yearId={yearId}
+              makeId={makeId}
+            />
+            : <Stub label="Model" message="..." />}
+        </>}
     </div>
   );
 }
